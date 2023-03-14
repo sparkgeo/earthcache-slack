@@ -1,6 +1,4 @@
 layout_python3
 
-export AWS_ACCESS_KEY_ID=
-export AWS_SECRET_ACCESS_KEY=
-export AWS_DEFAULT_REGION=
-export SLACK_BEARER_TOKEN=
+export SKYWATCH_API_KEY=
+export SLACK_WEBHOOK_URL=

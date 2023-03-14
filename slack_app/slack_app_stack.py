@@ -11,43 +11,24 @@ class SlackAppStack(core.Stack):
     def __init__(self, scope: core.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        worker_handler = lambda_.Function(
-            self,
-            "worker-lambda-handler",
-            function_name="slack-worker-lambda",
-            runtime=lambda_.Runtime.PYTHON_3_8,
-            code=lambda_.Code.from_asset("resources"),
-            handler="worker_handler.lambda_handler",
-            environment=dict(
-                SLACK_BEARER_TOKEN=os.environ["SLACK_BEARER_TOKEN"],
-            ),
-        )
-
         main_handler = lambda_.Function(
             self,
             "main-lambda-handler",
-            function_name="slack-main-lambda",
+            function_name="earthcache-slack-lambda",
             runtime=lambda_.Runtime.PYTHON_3_8,
             code=lambda_.Code.from_asset("resources"),
             handler="main_handler.lambda_handler",
             environment=dict(
-                WORKER_ARN=worker_handler.function_arn,
+                SKYWATCH_API_KEY=os.environ["SKYWATCH_API_KEY"],
+                SLACK_WEBHOOK_URL=os.environ["SLACK_WEBHOOK_URL"],
             ),
-        )
-
-        main_handler.add_to_role_policy(
-            statement=iam.PolicyStatement(
-                effect=iam.Effect.ALLOW,
-                actions=["lambda:InvokeFunction"],
-                resources=[worker_handler.function_arn],
-            )
         )
 
         api = apigateway.RestApi(
             self,
-            "slack-app-api",
-            rest_api_name="Slack App API Service",
-            description="This service serves accepts Slack slash command requests and responds with modals/messages.",
+            "earthcache-slack-api",
+            rest_api_name="EarthCache Slack API Service",
+            description="This service receives webhooks messages from SkyWatch EarthCache and produces Slack messages.",
             default_cors_preflight_options={"allow_origins": ["*"]},
         )
 
