@@ -1,59 +1,12 @@
-# Basic Slack Slash Command CDK Template
+# SkyWatch EarthCache Slack Webhook CDK Template
 
-This is a basic AWS CDK template for creating a simple Slack slash command backend.
+This is an [AWS CDK](https://aws.amazon.com/cdk/) template for creating a service that receives outgoing subscription messages from [SkyWatch EarthCache](https://skywatch.com/earthcache/) and sends block-formatted messages to a [Slack](https://slack.com/) incoming webhook app.
 
-The app in this template will display a modal window containing a text box. When submitted, the contents of the text box will be displayed within the Slack channel as an ephemeral message.
+## Setup and Usage
 
-## Setup
-
-1. Create a [Slack slash command](https://api.slack.com/interactivity/slash-commands). The `Request Url` will be created through CDK (you will have to edit the request url in the slash command UI manually, later). This template also makes use of Interactivity (a modal window), which you can enable and set to the same url, later.
-2. Set environment variables like those found in `.envrc_template`. Notably, `SLACK_BEARER_TOKEN` corresponds to the `Bot User OAuth Token` found in the app UI, once installed to your Slack workspace.
-3. Synth (`cdk synth`) and deploy (`cdk deploy`) the CDK stack within this repo, which creates an API Gateway, and two Lambda Functions. There is a high probability you will also have to add several permissions to the IAM Role(s).
-4. Once the stack has been created, edit the slash command request url and interactivity request url to match the created API Gateway endpoint.
-
-## Usage
-
-To manually create a virtualenv on MacOS and Linux:
-
-```
-$ python3 -m venv .venv
-```
-
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
-
-```
-$ source .venv/bin/activate
-```
-
-If you are a Windows platform, you would activate the virtualenv like this:
-
-```
-% .venv\Scripts\activate.bat
-```
-
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
-```
-
-At this point you can now synthesize the CloudFormation template for this code.
-
-```
-$ cdk synth
-```
-
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
-
-## Useful commands
-
-- `cdk ls` list all stacks in the app
-- `cdk synth` emits the synthesized CloudFormation template
-- `cdk deploy` deploy this stack to your default AWS account/region
-- `cdk diff` compare deployed stack with current state
-- `cdk docs` open CDK documentation
-
-Enjoy!
+1. Create a [Slack webhook app](https://api.slack.com/messaging/webhooks). You will create a `Webhook URL` and install the app to a channel in your Slack workspace.
+2. Set environment variables like those found in `.envrc_template`:
+  - SKYWATCH_API_KEY = your SkyWatch EarthCache API key
+  - SLACK_WEBHOOK_URL = Slack webhook URL created above, starting with `/services/...`
+3. Synth (`cdk synth`) and deploy (`cdk deploy`) the CDK stack within this repo, which creates an [API Gateway](https://aws.amazon.com/api-gateway/) and a [Lambda Function](https://aws.amazon.com/lambda/) in your authenticated AWS account.
+4. Once the stack has been created, use the output API Gateway URL + Lambda Function name as the `callback_uri` when creating a subscription to SkyWatch EarthCache.
