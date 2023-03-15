@@ -3,7 +3,6 @@ from aws_cdk import (
     core,
     aws_apigateway as apigateway,
     aws_lambda as lambda_,
-    aws_iam as iam,
 )
 
 
